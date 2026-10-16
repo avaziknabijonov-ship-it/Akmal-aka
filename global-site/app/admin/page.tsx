@@ -1,0 +1,6 @@
+import {headers} from 'next/headers';
+import {desc} from 'drizzle-orm';
+import {getDb} from '../../db/index';
+import {leads} from '../../db/schema';
+export const dynamic='force-dynamic';
+export default async function Admin(){const h=await headers();if(h.get('oai-authenticated-user-email')?.toLowerCase()!=='avaziknabijonov@gmail.com')return <main style={{padding:50}}><h1 style={{fontSize:40}}>Доступ ограничен</h1><p>Раздел заявок доступен только владельцу сайта.</p><a href="/signin-with-chatgpt?return_to=/admin">Войти</a></main>;const rows=await getDb().select().from(leads).orderBy(desc(leads.createdAt)).limit(500);return <main style={{padding:'40px 5%'}}><a href="/">← GLOBAL</a><h1 style={{fontSize:40}}>Заявки · {rows.length}</h1><p>Последние 500 заявок. Данные видны только владельцу.</p><div style={{overflowX:'auto'}}><table style={{width:'100%',textAlign:'left',borderCollapse:'collapse'}}><thead><tr>{['Дата','Имя','Телефон','Программа'].map(t=><th key={t} style={{padding:15,borderBottom:'1px solid #bbb'}}>{t}</th>)}</tr></thead><tbody>{rows.map(r=><tr key={r.id}>{[new Date(r.createdAt).toLocaleString('ru-RU',{timeZone:'Asia/Tashkent'}),r.name,r.phone,r.program].map((v,i)=><td key={i} style={{padding:15,borderBottom:'1px solid #ddd'}}>{v}</td>)}</tr>)}</tbody></table>{!rows.length&&<p>Пока нет заявок.</p>}</div></main>}
