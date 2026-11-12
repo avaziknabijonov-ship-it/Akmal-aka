@@ -1,6 +1,78 @@
-import {headers} from 'next/headers';
-import {desc} from 'drizzle-orm';
-import {getDb} from '../../db/index';
-import {leads} from '../../db/schema';
-export const dynamic='force-dynamic';
-export default async function Admin(){const h=await headers();if(h.get('oai-authenticated-user-email')?.toLowerCase()!=='avaziknabijonov@gmail.com')return <main style={{padding:50}}><h1 style={{fontSize:40}}>Доступ ограничен</h1><p>Раздел заявок доступен только владельцу сайта.</p><a href="/signin-with-chatgpt?return_to=/admin">Войти</a></main>;const rows=await getDb().select().from(leads).orderBy(desc(leads.createdAt)).limit(500);return <main style={{padding:'40px 5%'}}><a href="/">← GLOBAL</a><h1 style={{fontSize:40}}>Заявки · {rows.length}</h1><p>Последние 500 заявок. Данные видны только владельцу.</p><div style={{overflowX:'auto'}}><table style={{width:'100%',textAlign:'left',borderCollapse:'collapse'}}><thead><tr>{['Дата','Имя','Телефон','Программа'].map(t=><th key={t} style={{padding:15,borderBottom:'1px solid #bbb'}}>{t}</th>)}</tr></thead><tbody>{rows.map(r=><tr key={r.id}>{[new Date(r.createdAt).toLocaleString('ru-RU',{timeZone:'Asia/Tashkent'}),r.name,r.phone,r.program].map((v,i)=><td key={i} style={{padding:15,borderBottom:'1px solid #ddd'}}>{v}</td>)}</tr>)}</tbody></table>{!rows.length&&<p>Пока нет заявок.</p>}</div></main>}
+import Link from "next/link";
+import { headers } from "next/headers";
+import { adminAuthorized } from "../security";
+import { runtime } from "../server";
+export const dynamic = "force-dynamic";
+export default async function Admin({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const e = runtime();
+  if (!(await adminAuthorized(await headers(), e.ADMIN_PASSWORD)))
+    return <main>Доступ ограничен</main>;
+  const p = await searchParams;
+  const page = Math.max(1, Math.min(100000, Number(p.page) || 1)) | 0;
+  const rows = await e.DB.prepare(
+    "SELECT * FROM leads ORDER BY created_at DESC,id DESC LIMIT 51 OFFSET ?",
+  )
+    .bind((page - 1) * 50)
+    .all<Record<string, string>>();
+  return (
+    <main style={{ padding: "40px 5%" }}>
+      <Link href="/">GLOBAL</Link>
+      <h1>Заявки · {page}</h1>
+      <p>Данные доступны владельцу. Экспорт: текущая страница (50 записей).</p>
+      <a href={"/api/admin/export?page=" + page}>Скачать CSV</a>
+      <form action="/api/admin/retry" method="post">
+        <button>Повторить pending / failed (до 10)</button>
+      </form>
+      <p>
+        unknown / sending: проверьте Telegram по ID заявки; автоматический
+        повтор отключён, чтобы избежать дубликатов.
+      </p>
+      <div style={{ overflowX: "auto" }}>
+        <table>
+          <thead>
+            <tr>
+              {[
+                "ID",
+                "Дата",
+                "Имя",
+                "Телефон",
+                "Программа",
+                "Telegram",
+                "Ошибка",
+                "Попытки",
+              ].map((x) => (
+                <th key={x}>{x}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.results.slice(0, 50).map((r) => (
+              <tr key={r.id}>
+                {[
+                  "id",
+                  "created_at",
+                  "name",
+                  "phone",
+                  "program",
+                  "telegram_status",
+                  "telegram_error",
+                  "telegram_attempts",
+                ].map((k) => (
+                  <td style={{ padding: 12 }} key={k}>
+                    {r[k]}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {page > 1 && <a href={"?page=" + (page - 1)}>← Назад </a>}
+      {rows.results.length > 50 && <a href={"?page=" + (page + 1)}>Далее →</a>}
+    </main>
+  );
+}

@@ -8,6 +8,13 @@
       "when": 1792145591813,
       "tag": "0000_wooden_epoch",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1794509536083,
+      "tag": "0001_flaky_colossus",
+      "breakpoints": true
     }
   ]
 }
