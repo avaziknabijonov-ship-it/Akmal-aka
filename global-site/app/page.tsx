@@ -63,6 +63,7 @@ export default function Page() {
           {[
             ["О нас", "about"],
             ["Программы", "programs"],
+            ["Твой маршрут", "route"],
             ["Для 11 класса", "school"],
             ["Как поступить", "steps"],
           ].map(([t, id]) => (
@@ -99,8 +100,8 @@ export default function Page() {
               <br />
               Поможем найти свой путь к образованию за рубежом.
             </p>
-            <a className="button" href="#apply">
-              Найти свою программу <ArrowUpRight size={20} />
+            <a className="button" href="#route">
+              Подобрать свой маршрут <ArrowUpRight size={20} />
             </a>
             <div className="heronote">
               <span>✦</span> Твоё будущее начинается с одного шага
