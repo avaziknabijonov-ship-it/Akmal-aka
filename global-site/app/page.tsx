@@ -44,6 +44,7 @@ export default function Page() {
         "Спасибо! Ваша заявка сохранена. Мы свяжемся с вами по указанному номеру.",
       );
       form.reset();
+      setSelectedProgram("");
       requestId.current = "";
     } catch (e) {
       setStatus((e as Error).message + " Позвоните нам: +998 93 069 44 19.");
