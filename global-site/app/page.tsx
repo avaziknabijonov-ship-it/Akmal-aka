@@ -19,6 +19,7 @@ export default function Page() {
   const [token, setToken] = useState(""),
     [reset, setReset] = useState(0);
   const onToken = useCallback((t: string) => setToken(t), []);
+  const [selectedProgram, setSelectedProgram] = useState("");
   const [menu, setMenu] = useState(false),
     [status, setStatus] = useState(""),
     [busy, setBusy] = useState(false);
@@ -146,6 +147,66 @@ export default function Page() {
             <br />
             <b>Найти своё место в мире.</b>
           </p>
+        </section>
+        <section className="pathfinder section" id="route">
+          <div className="eyebrow">НАЙДИ СВОЙ СТАРТ</div>
+          <h2>С чего начинается <em>твой путь?</em></h2>
+          <p className="pathintro">
+            Выбери свою ситуацию — подскажем, какой вариант обучения можно рассмотреть и с чего начать.
+          </p>
+          <div className="pathgrid">
+            {[
+              {
+                icon: BookOpen,
+                title: "Я учусь в 11 классе",
+                text: "Узнай, как готовиться к поступлению параллельно со школой.",
+                program: "Программа для 11 класса",
+              },
+              {
+                icon: GraduationCap,
+                title: "Хочу получить высшее образование",
+                text: "Сравни направления и требования университетов.",
+                program: "Высшее образование",
+              },
+              {
+                icon: FileCheck,
+                title: "Мне нужна подготовка",
+                text: "Разберись с требованиями, языком и документами.",
+                program: "Подготовка к поступлению",
+              },
+              {
+                icon: Compass,
+                title: "Хочу учиться или сменить направление",
+                text: "Обсуди варианты обучения с учётом своего опыта и целей.",
+                program: "Обучение для взрослых",
+              },
+            ].map((x) => (
+              <button
+                className={selectedProgram === x.program ? "pathcard selected" : "pathcard"}
+                type="button"
+                key={x.program}
+                aria-pressed={selectedProgram === x.program}
+                onClick={() => setSelectedProgram(x.program)}
+              >
+                <x.icon />
+                <span className="pathcardtitle">{x.title}</span>
+                <span className="pathcardtext">{x.text}</span>
+                <span className="pathcardlink">
+                  {selectedProgram === x.program ? "Выбрано" : "Выбрать этот путь"} <ArrowUpRight size={16} />
+                </span>
+              </button>
+            ))}
+          </div>
+          <div className="pathnext" aria-live="polite">
+            <p>
+              {selectedProgram
+                ? "Следующий шаг — обсудить требования, примерный бюджет и подходящие варианты. Решение о зачислении принимает университет."
+                : "Пока не уверен? Выбери вариант выше — это поможет начать разговор с подходящего вопроса."}
+            </p>
+            <a className="button" href="#apply">
+              {selectedProgram ? "Обсудить мой маршрут" : "Помогите мне выбрать"} <ArrowUpRight size={18} />
+            </a>
+          </div>
         </section>
         <section className="section" id="programs">
           <div className="sectionhead">
@@ -364,7 +425,7 @@ export default function Page() {
             </label>
             <label>
               Что тебя интересует?
-              <select name="program" required>
+              <select name="program" required value={selectedProgram} onChange={(e) => setSelectedProgram(e.target.value)}>
                 <option value="">Выбери направление</option>
                 <option>Программа для 11 класса</option>
                 <option>Высшее образование</option>
