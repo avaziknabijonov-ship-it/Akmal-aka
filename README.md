@@ -1,45 +1,11 @@
-# GLOBAL — Website project
+# GLOBAL — education website
 
-This repository stores the source code and project notes for Akmal's GLOBAL education lead-generation website.
+Production: https://global-education.uz (Sites / Cloudflare Workers, D1 binding `DB`).
 
-## Current deployment
+`main` originally contained only project notes. `global-website` contains the incomplete source snapshot (commit `3ba7e8d`); this readiness branch carries the complete review candidate. See [global-site/README.md](global-site/README.md) for installation, configuration, migrations, security and Telegram delivery semantics.
 
-- Hosting: Cloudflare Workers
-- Telegram application notifications: enabled through the Cloudflare secret `TELEGRAM_BOT_TOKEN`
-- Do not put the Telegram bot token in this repository or in source code.
-- Keep the existing Cloudflare Worker live until a replacement is reviewed and tested.
+The Sites project is `appgprj_6ad1f83321a88191abeb7d874a607329`. On 2026-11-12 `get_site` reported active, version 18 and the production URL above. Listing saved versions was denied (`project_not_found`), so the live commit, runtime secrets and database schema could not be verified. The GitHub snapshot is **not verified as the exact live deployment source**. The former `easyloom8.chatgpt.site` URL and “owner-private” assertion are historical, not current verified settings.
 
-## Agreed website requirements
+Telegram was absent from the snapshot; the previous README's “enabled” claim was unsupported. This branch implements delivery, but does not configure or deploy it. Production was left untouched. Review the PR into `main`; merging is not deployment authorization.
 
-- Temporary brand: GLOBAL (final name will be chosen later)
-- Slogan: «Твоя следующая точка — весь мир.»
-- Premium, trustworthy, mobile-first design
-- Lead capture for school pupils, students, graduates, parents, and working adults; no upper age limit
-- Programs start from $5,000
-- Application form sends leads to Telegram
-- 22 countries and 169+ partner universities, using the country counts provided by Akmal
-- Add a dedicated 11th-grade section explaining parallel study over 6–9 months while finishing school. Avoid guaranteeing admission; say the student can apply after completing the relevant requirements.
-- Email will be added later, once the address is decided
-- Contact phones: +998 93 069 44 19 and +998 93 600 44 11
-
-## 11th-grade section — agreed draft
-
-**Ты учишься в 11 классе?**
-
-Не жди окончания школы — начни обучение уже сейчас.
-
-Пока ты заканчиваешь 11 класс, параллельно проходишь нашу программу 6–9 месяцев. После окончания получаешь аттестат и сертификат о пройденном обучении и можешь подавать документы на обучение за рубежом.
-
-**22 страны · 169+ университетов**
-
-**Начни сейчас — не теряй целый год.**
-
-Button: «Узнать о программе» (scrolls to the application form).
-
-## Before deploying a replacement
-
-1. Review the current live Worker code before changing it.
-2. Keep the Telegram integration using `env.TELEGRAM_BOT_TOKEN`; never commit a real token.
-3. Test the form and Telegram notification.
-4. Deploy to Cloudflare only after review.
-5. Keep this repository as a backup/source of truth.
+The existing GLOBAL design, contact phones, programs, 11th-grade section and no-guarantee admission wording are retained. No real credentials belong in this repository.
